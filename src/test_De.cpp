@@ -2,7 +2,6 @@
 #include <iostream>
 #include "De.hpp"
 
-
 int main(){
     std::println ("-- Test classe Dé --");  /**< Affichage */
     

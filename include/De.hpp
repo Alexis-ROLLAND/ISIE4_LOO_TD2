@@ -50,10 +50,37 @@ class De{
         /**
         *   Constructeur par défaut (sans paramètres)
         *   le fait d'ajouter " = default " a pour effet d'obliger le compilateur a définir lui-même cette méthode.
-        *   Dans le cas contraire, il eut fallu définir nous-mêmes ce constructeur (qui aurait été vide...)    
+        *   Dans le cas contraire, il eut fallu définir nous-mêmes ce constructeur (qui aurait été vide...).
+        *   Pour respecter la règle du zéro il faut que le constructeur par défaut soit "default" 
         */
         De() = default;     
         
+        /**
+        * Destructeur : ~De 
+        * 
+        * Tout comme le constructeur par défaut, il est " = default", la définition du destructeur est donc de la responsabilité
+        * du compilateur (ce n'est pas à nous de le coder).
+        * 
+        * Pour respecter la règle du zéro il faut que le destructeur soit "default"  
+        *         
+        * Les bonnes pratiques du C++ recommandent qu'un constructeur soit toujours "virtual", cela permet de résoudre d'éventuels
+        * problèmes liés à des redéfinitions lors d'une éventuelle spécialisation de classe. 
+        * Ce point est un point important pour la sécurité du code et des applications.
+        */
+        virtual ~De() = default;        /**< Destructeur par défaut */   
+
+        /** 
+         * Déclaration explicite des constructeurs et opérateurs d'affectation pour mettre en évidence le respect de la règle du zéro :
+         *      - Constructeur de recopie (constructeur par copie) et opérateur d'affectation associé.
+         *      - Move constructor et opérateur d'affectation associé.
+         */
+        De(const De&) = default;                /**< Constructeur par recopie   */
+        De(De&&) = default;                     /**< Move constructor    */
+        De& operator=(const De&) = default;     /**< Opérateur d'affectation associé au constructeur par recopie    */
+        De& operator=(De&&) = default;          /**< Opérateur d'affectation associé au move constructor            */
+
+
+
         /**
         * Constructeur "standard" pour un dé.
         * 
@@ -87,17 +114,7 @@ class De{
         */ 
         explicit De(TypeDe_t typeDe);    /**< Constructeur prenant comme paramètre un type de dé - explicit : oblige l'appel avec rigoureusement le type attendu. */
         
-        /**
-        * Destructeur : ~De 
-        * 
-        * Tout comme le constructeur par défaut, il est " = default", la définition du destructeur est donc de la responsabilité
-        * du compilateur (ce n'est pas à nous de le coder).
-        *         
-        * Les bonnes pratiques du C++ recommandent qu'un constructeur soit toujours "virtual", cela permet de résoudre d'éventuels
-        * problèmes liés à des redéfinitions lors d'une éventuelle spécialisation de classe. 
-        * Ce point est un point important pour la sécurité du code et des applications.
-        */
-        virtual ~De() = default;        /**< Destructeur par défaut */   
+        
         
         /**
         * Méthode exécutant un lancer du dé défini [MinValue;MaxValue]
@@ -137,8 +154,6 @@ class De{
 
 
 };
-
-
 
 
 #endif  /*  __DE_HPP__ */
