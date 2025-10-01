@@ -27,14 +27,14 @@ public:
      */
     enum class TypeDe_t : std::uint8_t
     {
-        D4,  /**< Dé à 4 faces (Tirages de 1 à 4) */
-        D6,  /**< Dé à 4 faces (Tirages de 1 à 6) */
-        D8,  /**< Dé à 8 faces (Tirages de 1 à 8) */
-        D10, /**< Dé à 10 faces (Tirages de 0 à 9)    */
-        D12, /**< Dé à 12 faces (Tirages de 1 à 12)   */
-        D20, /**< Dé à 20 faces (Tirages de 1 à 20)   */
-        D30, /**< Dé à 30 faces (Tirages de 1 à 30)   */
-        D100 /**< Dé à 100 faces (Tirages de 0 à 99)  */
+        D4 = 0,  /**< Dé à 4 faces (Tirages de 1 à 4) */
+        D6 = 1,  /**< Dé à 4 faces (Tirages de 1 à 6) */
+        D8 = 2,  /**< Dé à 8 faces (Tirages de 1 à 8) */
+        D10 = 3, /**< Dé à 10 faces (Tirages de 0 à 9)    */
+        D12 = 4, /**< Dé à 12 faces (Tirages de 1 à 12)   */
+        D20 = 5, /**< Dé à 20 faces (Tirages de 1 à 20)   */
+        D30 = 6, /**< Dé à 30 faces (Tirages de 1 à 30)   */
+        D100 = 7 /**< Dé à 100 faces (Tirages de 0 à 99)  */
     };
 
 private:
