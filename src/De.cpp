@@ -8,64 +8,26 @@
 #include "De.hpp"
 
 //----------------------------------------------------------------------------
-De::De(uint8_t FirstBoundary, uint8_t SecondBoundary)
+/**
+ * @note    On ne peut qu'initialiser MinValue et Maxvalue car ce sont des
+ *          champs "const". Maison veut s'assurer que, quel que soit "l'ordre"
+ *          des paramètres la plus petite valeur soit dans MinValue et la plus
+ *          grande dans MaxValue.
+ *          Faire un if dans le code ne fonctionne pas (ce ne serait pas une
+ *          initialisation, mais une affectation), mais il est possible d'intégrer
+ *          le test dans l'initialisation en utilisant l'opérateur ternaire.
+ *          Les inits ayant été réalisées, on peut gérer l'égalité entre les
+ *          paramètres et lever une exception en cas de tentativie de création
+ *          de dé à 1 face (min = max).
+ */
+De::De(uint8_t FirstBoundary, uint8_t SecondBoundary) : MinValue{(FirstBoundary < SecondBoundary) ? FirstBoundary : SecondBoundary}, MaxValue{(FirstBoundary < SecondBoundary) ? SecondBoundary : FirstBoundary}
 {
     /** Exception de type "std::domain_error" si les deux bornes sont égales    */
     if (FirstBoundary == SecondBoundary)
         throw std::domain_error("Le nombre de faces ne peut être égal à 1 (FirstBoundary must not be equal to SecondeBoundary).");
-
-    if (FirstBoundary < SecondBoundary)
-    {
-        this->MinValue = FirstBoundary;
-        this->MaxValue = SecondBoundary;
-    }
-    else
-    {
-        this->MinValue = SecondBoundary;
-        this->MaxValue = FirstBoundary;
-    }
 }
 //----------------------------------------------------------------------------
-De::De(TypeDe_t typeDe)
-{
-    switch (typeDe)
-    {
-    case TypeDe_t::D4:
-        this->MinValue = 1;
-        this->MaxValue = 4;
-        break;
-    case TypeDe_t::D6:
-        this->MinValue = 1;
-        this->MaxValue = 6;
-        break;
-    case TypeDe_t::D8:
-        this->MinValue = 1;
-        this->MaxValue = 8;
-        break;
-    case TypeDe_t::D10:
-        this->MinValue = 0;
-        this->MaxValue = 9;
-        break;
-    case TypeDe_t::D12:
-        this->MinValue = 1;
-        this->MaxValue = 12;
-        break;
-    case TypeDe_t::D20:
-        this->MinValue = 1;
-        this->MaxValue = 20;
-        break;
-    case TypeDe_t::D30:
-        this->MinValue = 1;
-        this->MaxValue = 30;
-        break;
-    case TypeDe_t::D100:
-        this->MinValue = 0;
-        this->MaxValue = 99;
-        break;
-    default:
-        throw std::domain_error("Le Dé est inconnu."); /** Ne devrait en aucun cas pouvoir se produire, mais... */
-    }
-}
+
 //----------------------------------------------------------------------------
 uint8_t De::Lancer() const noexcept
 {

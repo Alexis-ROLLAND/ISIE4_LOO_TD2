@@ -15,8 +15,12 @@
 #include <stdexcept> /**< Inclusion des éléments de la STL associés aux exceptions standard    */
 #include <print>     /**< Inclusion des éléments de la bibliothèque print (C++23)   */
 
+constexpr std::size_t NB_DES{8};
 constexpr uint8_t DEFAULT_MIN_VALUE{1}; /**< La valeur de MinValue par défaut, correspond à un D6    */
 constexpr uint8_t DEFAULT_MAX_VALUE{6}; /**< La valeur de MaxValue par défaut, correspond à un D6    */
+
+const std::array<uint8_t, NB_DES> tabMinValues{1, 1, 1, 0, 1, 1, 1, 0};
+const std::array<uint8_t, NB_DES> tabMaxValues{4, 6, 8, 9, 12, 20, 30, 99};
 
 class De
 {
@@ -38,8 +42,8 @@ public:
     };
 
 private:
-    uint8_t MinValue{DEFAULT_MIN_VALUE}; /**< MinValue initialisée avec DEFAULT_MIN_VALUE, pas de "magic number" */
-    uint8_t MaxValue{DEFAULT_MAX_VALUE}; /**< idem pour MaxValue avec DEFAULT_MAX_VALUE   */
+    const uint8_t MinValue{DEFAULT_MIN_VALUE}; /**< MinValue initialisée avec DEFAULT_MIN_VALUE, pas de "magic number" */
+    const uint8_t MaxValue{DEFAULT_MAX_VALUE}; /**< idem pour MaxValue avec DEFAULT_MAX_VALUE   */
 
     /**
      *   rdev et e (respectivement de types random_device et default_random_engine) sont des objets
@@ -105,8 +109,6 @@ public:
      *
      * @param[in]	typeDe      "descripteur" du dé (type enuméré TypeDe_t)
      *
-     * @throw std::domain_error("Le Dé est inconnu.");   Exception levée si d'aventure la valeur passée n'était pas connue.
-     *
      * Rq : explicit (specifier) : interdit au compilateur de faire de la conversion implicite de type ou équivalent pour le
      *                               paramètre d'entrée. Dans ce cas, cela impose d'appeler ce constructeur avec uniquement
      *                               un objet de type "TypeDe_t". Un int, par exemple, sera rejeté à la compilation.
@@ -114,7 +116,7 @@ public:
      *                               avec un seul paramètre d'entrée.
      *                               Ce point est un point important pour la sécurité du code et des applications.
      */
-    explicit De(TypeDe_t typeDe); /**< Constructeur prenant comme paramètre un type de dé - explicit : oblige l'appel avec rigoureusement le type attendu. */
+    explicit De(TypeDe_t typeDe) : MinValue{tabMinValues.at(static_cast<int>(typeDe))}, MaxValue{tabMaxValues.at(static_cast<int>(typeDe))} {}; /**< Constructeur prenant comme paramètre un type de dé - explicit : oblige l'appel avec rigoureusement le type attendu. */
 
     /**
      * Méthode exécutant un lancer du dé défini [MinValue;MaxValue]
