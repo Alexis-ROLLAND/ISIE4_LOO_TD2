@@ -10,29 +10,42 @@
 #ifndef __DE_HPP__
 #define __DE_HPP__
 
-#include <random>    /**< Inclusion des outils liés au moteur de génération de valeurs aléatoires */
-#include <vector>    /**< Inclusion des éléments de la STL associés au type "vector"  */
-#include <stdexcept> /**< Inclusion des éléments de la STL associés aux exceptions standard    */
+#include <map>       /**< Inclusion des éléments de la STL associés au type "map"     */
 #include <print>     /**< Inclusion des éléments de la bibliothèque print (C++23)   */
+#include <random>    /**< Inclusion des outils liés au moteur de génération de valeurs aléatoires */
+#include <stdexcept> /**< Inclusion des éléments de la STL associés aux exceptions standard    */
+#include <vector>    /**< Inclusion des éléments de la STL associés au type "vector"  */
 
 constexpr std::size_t NB_DES{8};
 constexpr uint8_t DEFAULT_MIN_VALUE{1}; /**< La valeur de MinValue par défaut, correspond à un D6    */
 constexpr uint8_t DEFAULT_MAX_VALUE{6}; /**< La valeur de MaxValue par défaut, correspond à un D6    */
 
-const std::array<uint8_t, NB_DES> tabMinValues{1, 1, 1, 0, 1, 1, 1, 0};
-const std::array<uint8_t, NB_DES> tabMaxValues{4, 6, 8, 9, 12, 20, 30, 99};
+using MinMaxDe_t =
+    std::pair<uint8_t, uint8_t>; /**< Définition d'un alias de type pour un pair de uint8_t (MinValue,MaxValue) */
 
-class De
-{
-public:
+const
+
+    const std::map<De::TypeDe_t, MinMaxDe_t>{
+        {De::TypeDe_t::D4, {1, 4}},   /**< Dé à 4 faces (Tirages de 1 à 4) */
+        {De::TypeDe_t::D6, {1, 6}},   /**< Dé à 6 faces (Tirages de 1 à 6) */
+        {De::TypeDe_t::D8, {1, 8}},   /**< Dé à 8 faces (Tirages de 1 à 8) */
+        {De::TypeDe_t::D10, {0, 9}},  /**< Dé à 10 faces (Tirages de 0 à 9)    */
+        {De::TypeDe_t::D12, {1, 12}}, /**< Dé à 12 faces (Tirages de 1 à 12)   */
+        {De::TypeDe_t::D20, {1, 20}}, /**< Dé à 20 faces (Tirages de 1 à 20)   */
+        {De::TypeDe_t::D30, {1, 30}}, /**< Dé à 30 faces (Tirages de 1 à 30)   */
+        {De::TypeDe_t::D100, {0, 99}} /**< Dé à 100 faces (Tirages de 0 à 99)  */
+    }; /**< Définition d'une map (tableau associatif) contenant les couples (MinValue,MaxValue) pour chaque type de dé
+          (TypeDe_t) */
+
+class De {
+  public:
     /**
      *	TypeDe_t
      * 	enum as imbricated class - public area
      */
-    enum class TypeDe_t : std::uint8_t
-    {
+    enum class TypeDe_t : std::uint8_t {
         D4 = 0,  /**< Dé à 4 faces (Tirages de 1 à 4) */
-        D6 = 1,  /**< Dé à 4 faces (Tirages de 1 à 6) */
+        D6 = 1,  /**< Dé à 6 faces (Tirages de 1 à 6) */
         D8 = 2,  /**< Dé à 8 faces (Tirages de 1 à 8) */
         D10 = 3, /**< Dé à 10 faces (Tirages de 0 à 9)    */
         D12 = 4, /**< Dé à 12 faces (Tirages de 1 à 12)   */
@@ -41,8 +54,9 @@ public:
         D100 = 7 /**< Dé à 100 faces (Tirages de 0 à 99)  */
     };
 
-private:
-    const uint8_t MinValue{DEFAULT_MIN_VALUE}; /**< MinValue initialisée avec DEFAULT_MIN_VALUE, pas de "magic number" */
+  private:
+    const uint8_t MinValue{
+        DEFAULT_MIN_VALUE}; /**< MinValue initialisée avec DEFAULT_MIN_VALUE, pas de "magic number" */
     const uint8_t MaxValue{DEFAULT_MAX_VALUE}; /**< idem pour MaxValue avec DEFAULT_MAX_VALUE   */
 
     /**
@@ -52,9 +66,9 @@ private:
      *   Il n'y a pas besoin d'en savoir plus pour le moment.
      */
     std::random_device rdev{};
-    mutable std::default_random_engine e{rdev()}; /**< mutable : e is modified when used, even if the object is const    */
+    mutable std::default_random_engine e{rdev()}; /**< mutable : e is modified when used, even if the object is const */
 
-public:
+  public:
     /**
      *   Constructeur par défaut (sans paramètres)
      *   le fait d'ajouter " = default " a pour effet d'obliger le compilateur a définir lui-même cette méthode.
@@ -66,19 +80,20 @@ public:
     /**
      * Destructeur : ~De
      *
-     * Tout comme le constructeur par défaut, il est " = default", la définition du destructeur est donc de la responsabilité
-     * du compilateur (ce n'est pas à nous de le coder).
+     * Tout comme le constructeur par défaut, il est " = default", la définition du destructeur est donc de la
+     * responsabilité du compilateur (ce n'est pas à nous de le coder).
      *
      * Pour respecter la règle du zéro il faut que le destructeur soit "default"
      *
-     * Les bonnes pratiques du C++ recommandent qu'un constructeur soit toujours "virtual", cela permet de résoudre d'éventuels
-     * problèmes liés à des redéfinitions lors d'une éventuelle spécialisation de classe.
-     * Ce point est un point important pour la sécurité du code et des applications.
+     * Les bonnes pratiques du C++ recommandent qu'un constructeur soit toujours "virtual", cela permet de résoudre
+     * d'éventuels problèmes liés à des redéfinitions lors d'une éventuelle spécialisation de classe. Ce point est
+     * un point important pour la sécurité du code et des applications.
      */
     virtual ~De() = default; /**< Destructeur par défaut */
 
     /**
-     * Déclaration explicite des constructeurs et opérateurs d'affectation pour mettre en évidence le respect de la règle du zéro :
+     * Déclaration explicite des constructeurs et opérateurs d'affectation pour mettre en évidence le respect de la
+     * règle du zéro :
      *      - Constructeur de recopie (constructeur par copie) et opérateur d'affectation associé.
      *      - Move constructor et opérateur d'affectation associé.
      */
@@ -90,15 +105,15 @@ public:
     /**
      * Constructeur "standard" pour un dé.
      *
-     * Les champs MinValue et MaxValue de l'objet "De" sont affectées respectivement de la plus petite valeur et de la la
-     * plus grande valeur passées en paramètres (De{1,6} et De{6,1} auront le même effet).
-     * Seul le cas où ces deux valeurs sont égales génère une erreur (levée d'exception).
+     * Les champs MinValue et MaxValue de l'objet "De" sont affectées respectivement de la plus petite valeur et de
+     * la la plus grande valeur passées en paramètres (De{1,6} et De{6,1} auront le même effet). Seul le cas où ces
+     * deux valeurs sont égales génère une erreur (levée d'exception).
      *
      * @param[in]	FirstBoundary Valeur du premier extremum
      * @param[in]	SecondBoundary Valeur du secondextremum
      *
-     * @throw 	std::domain_error("Le nombre de faces ne peut être égal à 1 (FirstBoundary must not be equal to SecondeBoundary).")
-     *           si les deux extrema sont égaux (dé à 1 face)
+     * @throw 	std::domain_error("Le nombre de faces ne peut être égal à 1 (FirstBoundary must not be equal to
+     * SecondeBoundary).") si les deux extrema sont égaux (dé à 1 face)
      */
     De(uint8_t FirstBoundary, uint8_t SecondBoundary);
 
@@ -109,36 +124,37 @@ public:
      *
      * @param[in]	typeDe      "descripteur" du dé (type enuméré TypeDe_t)
      *
-     * Rq : explicit (specifier) : interdit au compilateur de faire de la conversion implicite de type ou équivalent pour le
-     *                               paramètre d'entrée. Dans ce cas, cela impose d'appeler ce constructeur avec uniquement
-     *                               un objet de type "TypeDe_t". Un int, par exemple, sera rejeté à la compilation.
-     *                               Il s'agit d'une bonne pratique du C++ principalement recommandée pour les constructeurs
-     *                               avec un seul paramètre d'entrée.
-     *                               Ce point est un point important pour la sécurité du code et des applications.
+     * Rq : explicit (specifier) : interdit au compilateur de faire de la conversion implicite de type ou équivalent
+     * pour le paramètre d'entrée. Dans ce cas, cela impose d'appeler ce constructeur avec uniquement un objet de
+     * type "TypeDe_t". Un int, par exemple, sera rejeté à la compilation. Il s'agit d'une bonne pratique du C++
+     * principalement recommandée pour les constructeurs avec un seul paramètre d'entrée. Ce point est un point
+     * important pour la sécurité du code et des applications.
      */
-    explicit De(TypeDe_t typeDe) : MinValue{tabMinValues.at(static_cast<int>(typeDe))}, MaxValue{tabMaxValues.at(static_cast<int>(typeDe))} {}; /**< Constructeur prenant comme paramètre un type de dé - explicit : oblige l'appel avec rigoureusement le type attendu. */
+    explicit De(TypeDe_t typeDe)
+        : MinValue{tabMinMaxValues.at(static_cast<int>(typeDe)).first},
+          MaxValue{tabMinMaxValues.at(static_cast<int>(typeDe)).second} {
+          }; /**< Constructeur prenant comme paramètre un type de dé - explicit : oblige l'appel avec rigoureusement
+                le type attendu. */
 
     /**
      * Méthode exécutant un lancer du dé défini [MinValue;MaxValue]
      *
      * @return Valeur du tirage entre MinValue et MaxValue
      *
-     * rq : const : La méthode peut être utilisée dans le cas ou un objet constant est construint (const De MonDeConstant{...}; )
-     *               Une méthode non qualifiée de "const" ne pourra jamais être invoquée avec un objet constant.
-     *               Ce point est un point important pour la sécurité du code et des applications.
+     * rq : const : La méthode peut être utilisée dans le cas ou un objet constant est construint (const De
+     * MonDeConstant{...}; ) Une méthode non qualifiée de "const" ne pourra jamais être invoquée avec un objet
+     * constant. Ce point est un point important pour la sécurité du code et des applications.
      *
-     * rq : noexcept : Indique, à la fois au compilateur et à l'utilisateur (lecteur) de la classe que cette méthode ne
-     *                   lève aucune exception. Information intéressante à connaître pour l'utilisateur, car il sait
-     *                   immédiatement qu'il n'aura pas à gérer d'éventuelles exceptions lors de l'appel de la méthode (ou fonction)
-     *                   donc, pas de try/catch, etc...
+     * rq : noexcept : Indique, à la fois au compilateur et à l'utilisateur (lecteur) de la classe que cette méthode
+     * ne lève aucune exception. Information intéressante à connaître pour l'utilisateur, car il sait immédiatement
+     * qu'il n'aura pas à gérer d'éventuelles exceptions lors de l'appel de la méthode (ou fonction) donc, pas de
+     * try/catch, etc...
      *
-     * rq : [[nodiscard]] (attribute) : "Impose" (warning généré a minima) à celui qui appelle la méthode/fonction d'utiliser
-     *                                   la valeur de retour.
-     *                                   Il est intéressant de se poser la question de la nécessité de l'exploitation de cette valeur.
-     *                                   Souvent, si cette exploitation n'apparaît pas "obligatoire" c'est qu'il y a possiblement une
-     *                                   erreur d'analyse.
-     *                                   Bonne pratique C++ : toutes les fonctions/méthodes retournant une valeur doivent être
-     *                                   associées à cet attribut.
+     * rq : [[nodiscard]] (attribute) : "Impose" (warning généré a minima) à celui qui appelle la méthode/fonction
+     * d'utiliser la valeur de retour. Il est intéressant de se poser la question de la nécessité de l'exploitation
+     * de cette valeur. Souvent, si cette exploitation n'apparaît pas "obligatoire" c'est qu'il y a possiblement une
+     * erreur d'analyse. Bonne pratique C++ : toutes les fonctions/méthodes retournant une valeur doivent être
+     * associées à cet attribut.
      */
     [[nodiscard]] uint8_t Lancer() const noexcept;
 
@@ -147,11 +163,13 @@ public:
      *
      * @param[in]	NbDes       Nombre de dés à lancer
      *
-     * @return       Valeur du tirage sous forme d'un vector<uint8_t> contenant NbDes valeurs comprises entre MinValue et MaxValue
+     * @return       Valeur du tirage sous forme d'un vector<uint8_t> contenant NbDes valeurs comprises entre
+     * MinValue et MaxValue
      *
      * rq : const, noexcept, [[nodiscard]] : cf plus ci-dessus.
      */
-    [[nodiscard]] std::vector<uint8_t> Lancer(uint8_t NbDes) const noexcept; /** Un seul lancer de plusieurs (NbDes) dés    */
+    [[nodiscard]] std::vector<uint8_t>
+    Lancer(uint8_t NbDes) const noexcept; /** Un seul lancer de plusieurs (NbDes) dés    */
 };
 
 #endif /*  __DE_HPP__ */
