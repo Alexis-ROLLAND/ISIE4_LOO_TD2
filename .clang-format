@@ -1,7 +1,7 @@
 ---
 BasedOnStyle: LLVM
 IndentWidth: 4
-ColumnLimit: 120 # Réduction pour améliorer la lisibilité sur tous les écrans.
+ColumnLimit: 160 # Réduction pour améliorer la lisibilité sur tous les écrans.
 UseTab: Never
 
 # Gestion des instructions courtes et espaces autour des parenthèses.

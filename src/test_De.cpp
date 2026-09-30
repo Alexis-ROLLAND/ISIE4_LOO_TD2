@@ -1,16 +1,15 @@
 
 /**
  *	@file	test_De.cpp
- * 	@brief 	De class header file
+ * 	@brief 	Test de la classe De
  * 	@author	Alexis ROLLAND
- * 	@date	2025-10
+ * 	@date	2026-09
  *
  */
-#include <iostream>
 #include "De.hpp"
+#include <iostream>
 
-int main()
-{
+int main() {
     std::println("-- Test classe Dé --"); /**< Affichage */
 
     /** Test Dé par défaut (D6) - 1 seul tirage  */
@@ -41,12 +40,9 @@ int main()
         std::println("Lancer {0:d} :  {1:d}", nb, MonDe30.Lancer());
 
     /** Test de la génération d'une exception si min = max */
-    try
-    {
+    try {
         De MonDeCasse(4, 4);
-    }
-    catch (const std::exception &e)
-    {
+    } catch (const std::exception &e) {
         std::println("Exception occured : {}", e.what());
     }
 

@@ -2,7 +2,7 @@
  *	@file	De.hpp
  * 	@brief 	De class header file
  * 	@author	Alexis ROLLAND
- * 	@date	2025-10
+ * 	@date	2026-09
  *
  */
 
@@ -20,12 +20,27 @@ constexpr std::size_t NB_DES{8};
 constexpr uint8_t DEFAULT_MIN_VALUE{1}; /**< La valeur de MinValue par défaut, correspond à un D6    */
 constexpr uint8_t DEFAULT_MAX_VALUE{6}; /**< La valeur de MaxValue par défaut, correspond à un D6    */
 
-using MinMaxDe_t =
-    std::pair<uint8_t, uint8_t>; /**< Définition d'un alias de type pour un pair de uint8_t (MinValue,MaxValue) */
+using MinMaxDe_t = std::pair<uint8_t, uint8_t>; /**< Définition d'un alias de type pour un pair de uint8_t (MinValue,MaxValue) */
 
-const
+class De {
+  public:
+    /**
+     *	TypeDe_t
+     * 	enum as imbricated class - public area
+     */
+    enum class TypeDe_t : std::uint8_t {
+        D4,  /**< Dé à 4 faces (Tirages de 1 à 4) */
+        D6,  /**< Dé à 6 faces (Tirages de 1 à 6) */
+        D8,  /**< Dé à 8 faces (Tirages de 1 à 8) */
+        D10, /**< Dé à 10 faces (Tirages de 0 à 9)    */
+        D12, /**< Dé à 12 faces (Tirages de 1 à 12)   */
+        D20, /**< Dé à 20 faces (Tirages de 1 à 20)   */
+        D30, /**< Dé à 30 faces (Tirages de 1 à 30)   */
+        D100 /**< Dé à 100 faces (Tirages de 0 à 99)  */
+    };
 
-    const std::map<De::TypeDe_t, MinMaxDe_t>{
+  private:
+    const std::map<De::TypeDe_t, MinMaxDe_t> tabMinMaxValues{
         {De::TypeDe_t::D4, {1, 4}},   /**< Dé à 4 faces (Tirages de 1 à 4) */
         {De::TypeDe_t::D6, {1, 6}},   /**< Dé à 6 faces (Tirages de 1 à 6) */
         {De::TypeDe_t::D8, {1, 8}},   /**< Dé à 8 faces (Tirages de 1 à 8) */
@@ -37,26 +52,7 @@ const
     }; /**< Définition d'une map (tableau associatif) contenant les couples (MinValue,MaxValue) pour chaque type de dé
           (TypeDe_t) */
 
-class De {
-  public:
-    /**
-     *	TypeDe_t
-     * 	enum as imbricated class - public area
-     */
-    enum class TypeDe_t : std::uint8_t {
-        D4 = 0,  /**< Dé à 4 faces (Tirages de 1 à 4) */
-        D6 = 1,  /**< Dé à 6 faces (Tirages de 1 à 6) */
-        D8 = 2,  /**< Dé à 8 faces (Tirages de 1 à 8) */
-        D10 = 3, /**< Dé à 10 faces (Tirages de 0 à 9)    */
-        D12 = 4, /**< Dé à 12 faces (Tirages de 1 à 12)   */
-        D20 = 5, /**< Dé à 20 faces (Tirages de 1 à 20)   */
-        D30 = 6, /**< Dé à 30 faces (Tirages de 1 à 30)   */
-        D100 = 7 /**< Dé à 100 faces (Tirages de 0 à 99)  */
-    };
-
-  private:
-    const uint8_t MinValue{
-        DEFAULT_MIN_VALUE}; /**< MinValue initialisée avec DEFAULT_MIN_VALUE, pas de "magic number" */
+    const uint8_t MinValue{DEFAULT_MIN_VALUE}; /**< MinValue initialisée avec DEFAULT_MIN_VALUE, pas de "magic number" */
     const uint8_t MaxValue{DEFAULT_MAX_VALUE}; /**< idem pour MaxValue avec DEFAULT_MAX_VALUE   */
 
     /**
@@ -102,6 +98,9 @@ class De {
     De &operator=(const De &) = default; /**< Opérateur d'affectation associé au constructeur par recopie    */
     De &operator=(De &&) = default;      /**< Opérateur d'affectation associé au move constructor            */
 
+    uint8_t getMinValue() const noexcept { return this->MinValue; } /**< Getter pour MinValue */
+    uint8_t getMaxValue() const noexcept { return this->MaxValue; } /**< Getter pour MaxValue */
+
     /**
      * Constructeur "standard" pour un dé.
      *
@@ -130,11 +129,7 @@ class De {
      * principalement recommandée pour les constructeurs avec un seul paramètre d'entrée. Ce point est un point
      * important pour la sécurité du code et des applications.
      */
-    explicit De(TypeDe_t typeDe)
-        : MinValue{tabMinMaxValues.at(static_cast<int>(typeDe)).first},
-          MaxValue{tabMinMaxValues.at(static_cast<int>(typeDe)).second} {
-          }; /**< Constructeur prenant comme paramètre un type de dé - explicit : oblige l'appel avec rigoureusement
-                le type attendu. */
+    explicit De(TypeDe_t typeDe) : MinValue{tabMinMaxValues.at({typeDe}).first}, MaxValue{tabMinMaxValues.at({typeDe}).second} {};
 
     /**
      * Méthode exécutant un lancer du dé défini [MinValue;MaxValue]
@@ -168,8 +163,7 @@ class De {
      *
      * rq : const, noexcept, [[nodiscard]] : cf plus ci-dessus.
      */
-    [[nodiscard]] std::vector<uint8_t>
-    Lancer(uint8_t NbDes) const noexcept; /** Un seul lancer de plusieurs (NbDes) dés    */
+    [[nodiscard]] std::vector<uint8_t> Lancer(uint8_t NbDes) const noexcept; /** Un seul lancer de plusieurs (NbDes) dés    */
 };
 
 #endif /*  __DE_HPP__ */

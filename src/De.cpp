@@ -1,8 +1,8 @@
 /**
  *	@file	De.cpp
- * 	@brief 	De class header file
+ * 	@brief 	De class definition file
  * 	@author	Alexis ROLLAND
- * 	@date	2025-10
+ * 	@date	2026-09
  *
  */
 #include "De.hpp"
@@ -21,19 +21,16 @@
  *          de dé à 1 face (min = max).
  */
 De::De(uint8_t FirstBoundary, uint8_t SecondBoundary)
-    : MinValue{(FirstBoundary < SecondBoundary) ? FirstBoundary : SecondBoundary},
-      MaxValue{(FirstBoundary < SecondBoundary) ? SecondBoundary : FirstBoundary} {
+    : MinValue{(FirstBoundary < SecondBoundary) ? FirstBoundary : SecondBoundary}, MaxValue{(FirstBoundary < SecondBoundary) ? SecondBoundary : FirstBoundary} {
     /** Exception de type "std::domain_error" si les deux bornes sont égales    */
     if (FirstBoundary == SecondBoundary)
-        throw std::domain_error(
-            "Le nombre de faces ne peut être égal à 1 (FirstBoundary must not be equal to SecondeBoundary).");
+        throw std::domain_error("Le nombre de faces ne peut être égal à 1 (FirstBoundary must not be equal to SecondeBoundary).");
 }
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 uint8_t De::Lancer() const noexcept {
-    std::uniform_int_distribution<uint8_t> d{
-        this->MinValue, this->MaxValue}; /** Construction du "vrai générateur" de nombres aléatoires*/
+    std::uniform_int_distribution<uint8_t> d{this->getMinValue(), this->getMaxValue()}; /** Construction du "vrai générateur" de nombres aléatoires*/
     return d(this->e);
 }
 //----------------------------------------------------------------------------
