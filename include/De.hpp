@@ -17,10 +17,10 @@
 #include <vector>    /**< Inclusion des éléments de la STL associés au type "vector"  */
 
 constexpr std::size_t NB_DES{8};
-constexpr uint8_t DEFAULT_MIN_VALUE{1}; /**< La valeur de MinValue par défaut, correspond à un D6    */
-constexpr uint8_t DEFAULT_MAX_VALUE{6}; /**< La valeur de MaxValue par défaut, correspond à un D6    */
+constexpr uint8_t DEFAULT_BORNE_INF{1}; /**< La valeur de BorneInf par défaut, correspond à un D6    */
+constexpr uint8_t DEFAULT_BORNE_SUP{6}; /**< La valeur de BorneSup par défaut, correspond à un D6    */
 
-using MinMaxDe_t = std::pair<uint8_t, uint8_t>; /**< Définition d'un alias de type pour un pair de uint8_t (MinValue,MaxValue) */
+using MinMaxDe_t = std::pair<uint8_t, uint8_t>; /**< Définition d'un alias de type pour un pair de uint8_t (BorneInf,BorneSup) */
 
 class De {
   public:
@@ -49,11 +49,11 @@ class De {
         {De::TypeDe_t::D20, {1, 20}}, /**< Dé à 20 faces (Tirages de 1 à 20)   */
         {De::TypeDe_t::D30, {1, 30}}, /**< Dé à 30 faces (Tirages de 1 à 30)   */
         {De::TypeDe_t::D100, {0, 99}} /**< Dé à 100 faces (Tirages de 0 à 99)  */
-    }; /**< Définition d'une map (tableau associatif) contenant les couples (MinValue,MaxValue) pour chaque type de dé
+    }; /**< Définition d'une map (tableau associatif) contenant les couples (BorneInf,BorneSup) pour chaque type de dé
           (TypeDe_t) */
 
-    const uint8_t MinValue{DEFAULT_MIN_VALUE}; /**< MinValue initialisée avec DEFAULT_MIN_VALUE, pas de "magic number" */
-    const uint8_t MaxValue{DEFAULT_MAX_VALUE}; /**< idem pour MaxValue avec DEFAULT_MAX_VALUE   */
+    const uint8_t BorneInf{DEFAULT_BORNE_INF}; /**< BorneInf initialisée avec DEFAULT_BORNE_INF, pas de "magic number" */
+    const uint8_t BorneSup{DEFAULT_BORNE_SUP}; /**< idem pour BorneSup avec DEFAULT_BORNE_SUP   */
 
     /**
      *   rdev et e (respectivement de types random_device et default_random_engine) sont des objets
@@ -62,7 +62,7 @@ class De {
      *   Il n'y a pas besoin d'en savoir plus pour le moment.
      */
     std::random_device rdev{};
-    mutable std::default_random_engine e{rdev()}; /**< mutable : e is modified when used, even if the object is const */
+    mutable std::mt19937 e{rdev()}; /**< mutable : e is modified when used, even if the object is const */
 
   public:
     /**
@@ -98,13 +98,13 @@ class De {
     De &operator=(const De &) = default; /**< Opérateur d'affectation associé au constructeur par recopie    */
     De &operator=(De &&) = default;      /**< Opérateur d'affectation associé au move constructor            */
 
-    uint8_t getMinValue() const noexcept { return this->MinValue; } /**< Getter pour MinValue */
-    uint8_t getMaxValue() const noexcept { return this->MaxValue; } /**< Getter pour MaxValue */
+    uint8_t getBorneInf() const noexcept { return this->BorneInf; } /**< Getter pour BorneInf */
+    uint8_t getBorneSup() const noexcept { return this->BorneSup; } /**< Getter pour BorneSup */
 
     /**
      * Constructeur "standard" pour un dé.
      *
-     * Les champs MinValue et MaxValue de l'objet "De" sont affectées respectivement de la plus petite valeur et de
+     * Les champs BorneInf et BorneSup de l'objet "De" sont affectées respectivement de la plus petite valeur et de
      * la la plus grande valeur passées en paramètres (De{1,6} et De{6,1} auront le même effet). Seul le cas où ces
      * deux valeurs sont égales génère une erreur (levée d'exception).
      *
@@ -129,12 +129,12 @@ class De {
      * principalement recommandée pour les constructeurs avec un seul paramètre d'entrée. Ce point est un point
      * important pour la sécurité du code et des applications.
      */
-    explicit De(TypeDe_t typeDe) : MinValue{tabMinMaxValues.at({typeDe}).first}, MaxValue{tabMinMaxValues.at({typeDe}).second} {};
+    explicit De(TypeDe_t typeDe) : BorneInf{tabMinMaxValues.at({typeDe}).first}, BorneSup{tabMinMaxValues.at({typeDe}).second} {};
 
     /**
-     * Méthode exécutant un lancer du dé défini [MinValue;MaxValue]
+     * Méthode exécutant un lancer du dé défini [BorneInf;BorneSup]
      *
-     * @return Valeur du tirage entre MinValue et MaxValue
+     * @return Valeur du tirage entre BorneInf et BorneSup
      *
      * rq : const : La méthode peut être utilisée dans le cas ou un objet constant est construint (const De
      * MonDeConstant{...}; ) Une méthode non qualifiée de "const" ne pourra jamais être invoquée avec un objet
@@ -159,7 +159,7 @@ class De {
      * @param[in]	NbDes       Nombre de dés à lancer
      *
      * @return       Valeur du tirage sous forme d'un vector<uint8_t> contenant NbDes valeurs comprises entre
-     * MinValue et MaxValue
+     * BorneInf et BorneSup
      *
      * rq : const, noexcept, [[nodiscard]] : cf plus ci-dessus.
      */

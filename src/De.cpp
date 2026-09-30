@@ -9,10 +9,10 @@
 
 //----------------------------------------------------------------------------
 /**
- * @note    On ne peut qu'initialiser MinValue et Maxvalue car ce sont des
+ * @note    On ne peut qu'initialiser BorneInf et BorneSup car ce sont des
  *          champs "const". Mais on veut s'assurer que, quel que soit "l'ordre"
- *          des paramètres la plus petite valeur soit dans MinValue et la plus
- *          grande dans MaxValue.
+ *          des paramètres la plus petite valeur soit dans BorneInf et la plus
+ *          grande dans BorneSup.
  *          Faire un if dans le code ne fonctionne pas (ce ne serait pas une
  *          initialisation, mais une affectation), mais il est possible d'intégrer
  *          le test dans l'initialisation en utilisant l'opérateur ternaire.
@@ -21,7 +21,7 @@
  *          de dé à 1 face (min = max).
  */
 De::De(uint8_t FirstBoundary, uint8_t SecondBoundary)
-    : MinValue{(FirstBoundary < SecondBoundary) ? FirstBoundary : SecondBoundary}, MaxValue{(FirstBoundary < SecondBoundary) ? SecondBoundary : FirstBoundary} {
+    : BorneInf{(FirstBoundary < SecondBoundary) ? FirstBoundary : SecondBoundary}, BorneSup{(FirstBoundary < SecondBoundary) ? SecondBoundary : FirstBoundary} {
     /** Exception de type "std::domain_error" si les deux bornes sont égales    */
     if (FirstBoundary == SecondBoundary)
         throw std::domain_error("Le nombre de faces ne peut être égal à 1 (FirstBoundary must not be equal to SecondeBoundary).");
@@ -30,7 +30,7 @@ De::De(uint8_t FirstBoundary, uint8_t SecondBoundary)
 
 //----------------------------------------------------------------------------
 uint8_t De::Lancer() const noexcept {
-    std::uniform_int_distribution<uint8_t> d{this->getMinValue(), this->getMaxValue()}; /** Construction du "vrai générateur" de nombres aléatoires*/
+    std::uniform_int_distribution<uint8_t> d{this->getBorneInf(), this->getBorneSup()}; /** Construction du "vrai générateur" de nombres aléatoires*/
     return d(this->e);
 }
 //----------------------------------------------------------------------------
